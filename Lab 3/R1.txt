@@ -1,0 +1,122 @@
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname Kunri_R1
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1.1
+ encapsulation dot1Q 1 native
+ ip address 131.72.5.65 255.255.255.224
+!
+interface GigabitEthernet0/0/1.712
+ description Connection to Peas
+ encapsulation dot1Q 712
+ ip address 131.72.0.1 255.255.252.0
+ ip access-group ACLVLAN712 in
+!
+interface Serial0/1/0
+ description Connection to Mithi
+ bandwidth 128
+ ip address 131.72.5.145 255.255.255.252
+!
+interface Serial0/1/1
+ description Connection to Badin
+ bandwidth 64
+ ip address 131.72.5.141 255.255.255.252
+!
+interface Serial0/2/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 65
+ passive-interface GigabitEthernet0/0/1.712
+ passive-interface GigabitEthernet0/0/1.1
+ network 131.72.0.0 0.0.3.255
+ network 131.72.5.64 0.0.0.31
+ network 131.72.5.140 0.0.0.3
+ network 131.72.5.144 0.0.0.3
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ip access-list extended ACLVLAN712
+ permit tcp 131.72.0.0 0.0.3.255 host 143.18.0.1 eq www
+ deny ip 131.72.0.0 0.0.3.255 143.18.0.0 0.0.255.255
+ permit ip 131.72.0.0 0.0.3.255 any
+ip access-list standard telnet_restrict
+ permit 131.72.0.0 0.0.3.255
+!
+banner motd ^CJoey Manani 105928712 Tuesday 8:30^C
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ access-class telnet_restrict in
+ password 7 0822455D0A16
+ logging synchronous
+ login
+ transport input telnet
+!
+!
+!
+end

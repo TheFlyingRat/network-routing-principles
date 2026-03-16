@@ -1,0 +1,31 @@
+on router closest to vlan XXX, 712, therefore this is on kodad
+
+VlanXXX ---x--> HTTP Loopback0
+all other vlans yes Loopback 0
+
+
+
+
+VlanXXX ---> HTTP Loopback1
+all other vlans no Loopback 1
+
+
+
+
+VlanXXX --x--> Loopback2
+permit all other vlans
+
+
+
+
+VlanXXX ----> all other ips
+
+-----
+
+source vlan 712 (xxx) --> 148.72.0.0 (wildcard 0.0.7.255 - inverse subnet mask)
+
+1 no http to loopback0
+2 only http to loopback1
+3 block everything else loopback1
+4 block everything to loopback 2
+5 allow everything else

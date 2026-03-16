@@ -1,0 +1,120 @@
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname Mithi_R2
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1.1
+ description Native vlan connection
+ encapsulation dot1Q 1 native
+ ip address 131.72.5.129 255.255.255.248
+!
+interface GigabitEthernet0/0/1.112
+ description Connection to rice
+ encapsulation dot1Q 112
+ ip address 131.72.5.1 255.255.255.192
+!
+interface GigabitEthernet0/0/1.928
+ description Connection to Flour
+ encapsulation dot1Q 928
+ ip address 131.72.4.1 255.255.255.0
+!
+interface Serial0/1/0
+ description Connection to Kunri
+ bandwidth 128
+ ip address 131.72.5.146 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/1/1
+ description Connection to Badin
+ bandwidth 512
+ ip address 131.72.5.138 255.255.255.252
+!
+interface Serial0/2/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 65
+ passive-interface GigabitEthernet0/0/1.1
+ passive-interface GigabitEthernet0/0/1.928
+ passive-interface GigabitEthernet0/0/1.112
+ network 131.72.4.0 0.0.0.255
+ network 131.72.5.0 0.0.0.63
+ network 131.72.5.128 0.0.0.7
+ network 131.72.5.136 0.0.0.3
+ network 131.72.5.144 0.0.0.3
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+banner motd ^CJoey Manani 105928712 Tuesday 8:30^C
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ logging synchronous
+ login
+!
+!
+!
+end

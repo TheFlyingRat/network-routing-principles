@@ -1,0 +1,12 @@
+en
+conf t
+no ip domain-lookup
+banner motd #Joey Manani 105928712 Tuesday 8:30#
+line con 0
+logging synchronous
+exit
+line vty 0 4
+logging synchronous
+exit
+service password-encryption
+end
