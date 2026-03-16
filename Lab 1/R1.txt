@@ -1,0 +1,110 @@
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Tandur_R1
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1.1
+ description Connection to VLAN1 Management
+ encapsulation dot1Q 1 native
+ ip address 158.72.5.1 255.255.255.224
+!
+interface GigabitEthernet0/0/1.256
+ description Connection to Hindi VLAN
+ encapsulation dot1Q 256
+ ip address 158.72.4.129 255.255.255.192
+!
+interface GigabitEthernet0/0/1.712
+ description Connection to French VLAN
+ encapsulation dot1Q 712
+ ip address 158.72.0.1 255.255.252.0
+!
+interface GigabitEthernet0/0/1.928
+ description Connection to English VLAN
+ encapsulation dot1Q 928
+ ip address 158.72.4.1 255.255.255.128
+!
+interface Serial0/1/0
+ description Connection to Sedam
+ ip address 158.72.5.33 255.255.255.252
+!
+interface Serial0/1/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router rip
+ version 2
+ passive-interface GigabitEthernet0/0/1.256
+ passive-interface GigabitEthernet0/0/1.712
+ passive-interface GigabitEthernet0/0/1.928
+ network 158.72.0.0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+banner motd ^C105928712 Joey Tuesday 8:30am^C
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end

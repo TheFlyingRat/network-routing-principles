@@ -1,0 +1,11 @@
+158.72.5.3 (within native vlan 1 158.72.5.0/27)
+255.255.255.224
+default gateway is 158.72.5.1 (router 1 vlan1 subint)
+
+
+dhcp 
+
+disable firewall
+
+ssid: W105928712
+no password
