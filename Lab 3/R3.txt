@@ -91,6 +91,7 @@ ip flow-export version 9
 !
 ip access-list standard telnet_restrict
  deny 131.72.0.0 0.0.3.255
+ permit any
 !
 banner motd ^CJoey Manani 105928712 Tuesday 8:30^C
 !
