@@ -1,0 +1,77 @@
+! =====================================================
+! Korba_S3 (Cisco Catalyst 3650) - Scenario 5-P
+! VLANs 712/928/256 + trunk G1/0/11 to Korba_R1
+! =====================================================
+enable
+configure terminal
+!
+no ip domain-lookup
+service password-encryption
+hostname Korba_S3
+!
+banner motd #Joey Manani 105928712 Tuesday 8:30#
+!
+enable password cisco
+!
+! --- VLANs ---
+vlan 712
+ name Green
+vlan 928
+ name Blue
+vlan 256
+ name Grey
+exit
+!
+! --- Trunk to Korba_R1 ---
+interface GigabitEthernet1/0/11
+ description Trunk to Korba_R1
+ switchport mode trunk
+!
+! --- Access ports on VLAN 712 (VLANXXX) with port security ---
+interface GigabitEthernet1/0/13
+ description PC1 Ethernet VM VLANXXX
+ switchport mode access
+ switchport access vlan 712
+ switchport port-security
+ switchport port-security maximum 4
+ switchport port-security mac-address sticky
+ switchport port-security violation protect
+!
+interface GigabitEthernet1/0/14
+ description Spare VLANXXX access port
+ switchport mode access
+ switchport access vlan 712
+ switchport port-security
+ switchport port-security maximum 4
+ switchport port-security mac-address sticky
+ switchport port-security violation protect
+!
+! --- Access port on VLAN 928 (VLANYYY) ---
+interface GigabitEthernet1/0/24
+ description PC2 VAN VM VLANYYY
+ switchport mode access
+ switchport access vlan 928
+!
+! --- Management interface (VLAN 1) ---
+interface Vlan1
+ ip address 158.72.9.34 255.255.255.240
+ no shutdown
+!
+ip default-gateway 158.72.9.33
+!
+! --- VTY lines (telnet with password cisco) ---
+line con 0
+ logging synchronous
+!
+line vty 0 4
+ password cisco
+ logging synchronous
+ login
+ transport input telnet
+line vty 5 15
+ password cisco
+ login
+ transport input telnet
+!
+end
+copy running-config startup-config

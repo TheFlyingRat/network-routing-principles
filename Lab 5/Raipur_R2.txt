@@ -1,0 +1,67 @@
+! =====================================================
+! Raipur_R2 (ISR 4321) - Scenario 5-P
+! Gateway router: Loopback0 DB + serial to Korba + serial to ISP
+! =====================================================
+enable
+configure terminal
+!
+no ip domain-lookup
+service password-encryption
+hostname Raipur_R2
+!
+banner motd #Joey Manani 105928712 Tuesday 8:30#
+!
+! --- Database Server LAN (Loopback 0) ---
+interface Loopback0
+ description Connection to Database Server LAN
+ ip address 158.72.9.65 255.255.255.224
+!
+! --- Serial link to Korba (DCE) ---
+interface Serial0/1/0
+ description Connection to Korba
+ bandwidth 512
+ ip address 158.72.9.50 255.255.255.252
+ clock rate 2000000
+ no shutdown
+!
+! --- Serial link to ISP ---
+interface Serial0/1/1
+ description Connection to ISP
+ ip address 201.24.41.1 255.255.255.252
+ no shutdown
+!
+! --- OSPF ---
+router ospf 1
+ log-adjacency-changes
+ passive-interface default
+ no passive-interface Serial0/1/0
+ network 158.72.9.48 0.0.0.3 area 0
+ network 158.72.9.64 0.0.0.31 area 0
+ default-information originate
+!
+! --- Default route out to ISP ---
+ip route 0.0.0.0 0.0.0.0 201.24.41.2
+!
+! --- Telnet ACL: deny VLANXXX, permit others ---
+ip access-list standard TELNET
+ deny   158.72.0.0 0.0.7.255
+ permit any
+!
+! --- VTY lines ---
+line con 0
+ logging synchronous
+!
+line vty 0 4
+ access-class TELNET in
+ password cisco
+ logging synchronous
+ login
+ transport input telnet
+line vty 5 15
+ access-class TELNET in
+ password cisco
+ login
+ transport input telnet
+!
+end
+copy running-config startup-config

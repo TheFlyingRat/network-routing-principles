@@ -1,0 +1,56 @@
+! =====================================================
+! ISP_R3 (ISR 4321) - Scenario 5-P
+! External ISP router: 4 loopbacks + serial to Raipur
+! =====================================================
+enable
+configure terminal
+!
+no ip domain-lookup
+service password-encryption
+hostname ISP_R3
+!
+banner motd #Joey Manani 105928712 Tuesday 8:30#
+!
+! --- External Web Server Loopbacks ---
+interface Loopback0
+ description External Web Server 1
+ ip address 148.33.0.1 255.255.0.0
+!
+interface Loopback1
+ description External Web Server 2
+ ip address 81.0.0.1 255.0.0.0
+!
+interface Loopback2
+ description External Web Server 3
+ ip address 171.90.0.1 255.255.0.0
+!
+interface Loopback3
+ description External Web Server 4
+ ip address 201.2.44.1 255.255.255.0
+!
+! --- Serial link to Raipur (DCE) ---
+interface Serial0/1/1
+ description Connection to Internal Corporate Network (Raipur)
+ ip address 201.24.41.2 255.255.255.252
+ clock rate 2000000
+ no shutdown
+!
+! --- Static route back to the Internal network ---
+ip route 158.72.0.0 255.255.0.0 201.24.41.1
+!
+! --- VTY lines ---
+line con 0
+ logging synchronous
+!
+line vty 0 4
+ password cisco
+ logging synchronous
+ login
+ transport input telnet
+line vty 5 15
+ password cisco
+ login
+ transport input telnet
+!
+end
+copy running-config startup-config

@@ -1,0 +1,87 @@
+! =====================================================
+! Korba_R1 (ISR 4321) - Scenario 5-P
+! Internal router: trunk to Korba_S3 + serial to Raipur
+! =====================================================
+enable
+configure terminal
+!
+no ip domain-lookup
+service password-encryption
+hostname Korba_R1
+!
+banner motd #Joey Manani 105928712 Tuesday 8:30#
+!
+! --- Trunk sub-interfaces to Korba_S3 ---
+interface GigabitEthernet0/0/1
+ description Trunk to Korba_S3
+ no shutdown
+!
+interface GigabitEthernet0/0/1.1
+ description Native VLAN1 Management
+ encapsulation dot1Q 1 native
+ ip address 158.72.9.33 255.255.255.240
+!
+interface GigabitEthernet0/0/1.712
+ description Green VLAN - VLANXXX
+ encapsulation dot1Q 712
+ ip address 158.72.0.1 255.255.248.0
+ ip access-group VLANXXX in
+!
+interface GigabitEthernet0/0/1.928
+ description Blue VLAN - VLANYYY
+ encapsulation dot1Q 928
+ ip address 158.72.9.1 255.255.255.224
+!
+interface GigabitEthernet0/0/1.256
+ description Grey VLAN - VLANZZZ
+ encapsulation dot1Q 256
+ ip address 158.72.8.1 255.255.255.0
+!
+! --- Serial link to Raipur ---
+interface Serial0/1/0
+ description Connection to Raipur
+ bandwidth 512
+ ip address 158.72.9.49 255.255.255.252
+ no shutdown
+!
+! --- OSPF ---
+router ospf 1
+ log-adjacency-changes
+ passive-interface default
+ no passive-interface Serial0/1/0
+ network 158.72.0.0 0.0.7.255 area 0
+ network 158.72.8.0 0.0.0.255 area 0
+ network 158.72.9.0 0.0.0.31 area 0
+ network 158.72.9.32 0.0.0.15 area 0
+ network 158.72.9.48 0.0.0.3 area 0
+!
+! --- Generic ACL applied on VLANXXX inbound ---
+ip access-list extended VLANXXX
+ permit tcp 158.72.0.0 0.0.7.255 host 148.33.0.1 eq www
+ deny   ip  158.72.0.0 0.0.7.255 host 148.33.0.1
+ deny   icmp 158.72.0.0 0.0.7.255 158.72.9.0 0.0.0.31 echo
+ permit icmp 158.72.0.0 0.0.7.255 158.72.9.0 0.0.0.31 echo-reply
+ permit ip  158.72.0.0 0.0.7.255 any
+!
+! --- Telnet ACL: only VLANXXX allowed to telnet in ---
+ip access-list standard TELNET
+ permit 158.72.0.0 0.0.7.255
+!
+! --- VTY lines ---
+line con 0
+ logging synchronous
+!
+line vty 0 4
+ access-class TELNET in
+ password cisco
+ logging synchronous
+ login
+ transport input telnet
+line vty 5 15
+ access-class TELNET in
+ password cisco
+ login
+ transport input telnet
+!
+end
+copy running-config startup-config
