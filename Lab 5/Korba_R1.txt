@@ -67,6 +67,34 @@ ip access-list extended VLANXXX
 ip access-list standard TELNET
  permit 158.72.0.0 0.0.7.255
 !
+
+
+
+
+
+
+! --- DHCP 5C Tasks ---
+ip dchp excluded-address 158.72.0.1
+ip dchp excluded-address 158.72.9.1
+ip dchp excluded-address 158.72.8.1
+!
+ip dhcp pool GreenVLAN
+  network 158.72.0.0 255.255.248.0
+  default-router 158.72.0.1
+!
+ip dhcp pool BlueVLAN
+  network 158.72.9.0 255.255.255.224
+  default-router 158.72.9.1
+!
+ip dhcp pool GreyVLAN
+  network 158.72.8.0 255.255.255.0
+  default-router 158.72.8.1
+!
+
+
+
+
+
 ! --- VTY lines ---
 line con 0
  logging synchronous
