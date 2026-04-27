@@ -1,0 +1,113 @@
+
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R3
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description Extenal Web Server 1
+ ip address 89.0.0.1 255.0.0.0
+!
+interface Loopback1
+ description Extenal Web Server 2
+ ip address 145.66.0.1 255.255.0.0
+!
+interface Loopback2
+ description Extenal Web Server 3
+ ip address 191.55.0.1 255.255.0.0
+!
+interface Loopback3
+ description Extenal Web Server 4
+ ip address 211.41.7.1 255.255.255.0
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/1/0
+ description Connection to Corporate Network
+ ip address 203.0.113.22 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/1/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+ip route 172.18.16.0 255.255.240.0 203.0.113.21 
+!
+ip flow-export version 9
+!
+!
+!
+banner motd ^C Joey Manani 10529812 Tuesday 8:30am ^C
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end

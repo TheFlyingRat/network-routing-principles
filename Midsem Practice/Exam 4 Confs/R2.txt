@@ -1,0 +1,119 @@
+
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R2
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description Database server loopback
+ ip address 172.18.29.1 255.255.255.128
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/1/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/1/1
+ description Connection to R1 (Internal Serial Link)
+ bandwidth 512
+ ip address 172.18.29.210 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/2/0
+ description Connection to R3
+ ip address 203.0.113.21 255.255.255.252
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 65
+ redistribute static 
+ passive-interface default
+ no passive-interface Serial0/1/1
+ network 172.18.29.0 0.0.0.127
+ network 172.18.29.208 0.0.0.3
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 203.0.113.22 
+!
+ip flow-export version 9
+!
+!
+ip access-list standard TELNETACL
+ deny 0.0.0.0 255.255.248.0
+ permit any
+!
+banner motd ^C Joey Manani 105928712 Tuesday 8:30am ^C
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ access-class TELNETACL in
+ password cisco
+ login
+ transport input telnet
+line vty 5 15
+ access-class TELNETACL in
+ password cisco
+ login
+ transport input telnet
+!
+!
+!
+end

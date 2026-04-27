@@ -1,0 +1,106 @@
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R2
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description Database Server Loopback
+ ip address 172.16.5.97 255.255.255.224
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/1/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/1/1
+ description Connection to R1 (Internal Serial Link)
+ ip address 172.16.5.130 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/2/0
+ description Connection to R3 (ISP Router - Serial Link)
+ ip address 198.51.100.1 255.255.255.252
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router rip
+ version 2
+ passive-interface default
+ no passive-interface Serial0/1/1
+ no passive-interface Loopback0
+ network 172.16.0.0
+ default-information originate
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 198.51.100.2 
+!
+ip flow-export version 9
+!
+!
+!
+banner motd ^C Joey Manani 105928712 Tuesday 8:30am ^C
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end

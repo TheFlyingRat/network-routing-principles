@@ -1,0 +1,151 @@
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R1
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1.1
+ description Connection to Management VLAN
+ encapsulation dot1Q 1 native
+ ip address 172.18.29.193 255.255.255.240
+!
+interface GigabitEthernet0/0/1.60
+ description Connection to Engineering VLAN
+ encapsulation dot1Q 60
+ ip address 172.18.16.1 255.255.248.0
+ ip access-group VLAN60ACL in
+!
+interface GigabitEthernet0/0/1.70
+ description Connection to Production VLAN
+ encapsulation dot1Q 70
+ ip address 172.18.24.1 255.255.252.0
+ ip access-group VLAN70ACL in
+!
+interface GigabitEthernet0/0/1.80
+ description Connection to QA Vlan
+ encapsulation dot1Q 80
+ ip address 172.18.28.1 255.255.255.0
+!
+interface GigabitEthernet0/0/1.90
+ description Connection to Admin VLAN
+ encapsulation dot1Q 90
+ ip address 172.18.29.129 255.255.255.192
+!
+interface Serial0/1/0
+ description Connection to R2 (Internal Serial Link)
+ bandwidth 512
+ ip address 172.18.29.209 255.255.255.252
+!
+interface Serial0/1/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 65
+ passive-interface default
+ no passive-interface Serial0/1/0
+ network 172.18.16.0 0.0.7.255
+ network 172.18.24.0 0.0.3.255
+ network 172.18.28.0 0.0.0.255
+ network 172.18.29.128 0.0.0.63
+ network 172.18.29.192 0.0.0.15
+ network 172.18.29.208 0.0.0.3
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ip access-list extended VLAN60ACL
+ deny ip 0.0.0.0 255.255.248.0 host 191.55.0.1
+ permit tcp 0.0.0.0 255.255.248.0 host 145.66.0.1 eq 443
+ deny ip 0.0.0.0 255.255.248.0 host 145.66.0.1
+ deny icmp 0.0.0.0 255.255.248.0 any
+ permit ip 0.0.0.0 255.255.248.0 any
+ip access-list extended VLAN70ACL
+ deny ip 0.0.0.0 255.255.252.0 0.0.0.1 255.255.255.128
+ deny tcp 0.0.0.0 255.255.252.0 host 89.0.0.1 eq www
+ permit ip 0.0.0.0 255.255.252.0 host 89.0.0.1
+ permit ip 0.0.0.0 255.255.252.0 any
+ip access-list standard TELNETACL
+ permit 0.0.0.0 255.255.248.0
+!
+banner motd ^C Joey Manani 105928712 8:30am ^C
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ access-class TELNETACL in
+ password cisco
+ login
+ transport input telnet
+line vty 5 15
+ access-class TELNETACL in
+ password cisco
+ login
+ transport input telnet
+!
+!
+!
+end
