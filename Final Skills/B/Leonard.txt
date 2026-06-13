@@ -1,0 +1,130 @@
+
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Leonard
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.5.190 255.255.255.192
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1.1
+ encapsulation dot1Q 1 native
+ ip address 192.168.6.30 255.255.255.224
+!
+interface GigabitEthernet0/0/1.47
+ encapsulation dot1Q 47
+ ip address 192.168.5.126 255.255.255.128
+ ip helper-address 192.168.6.33
+!
+interface GigabitEthernet0/0/1.64
+ encapsulation dot1Q 64
+ ip address 192.168.4.254 255.255.255.0
+ ip helper-address 192.168.6.33
+!
+interface GigabitEthernet0/0/1.73
+ encapsulation dot1Q 73
+ ip address 192.168.3.254 255.255.252.0
+!
+interface Serial0/1/0
+ ip address 192.168.6.34 255.255.255.252
+!
+interface Serial0/1/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ log-adjacency-changes
+ passive-interface default
+ no passive-interface Serial0/1/0
+ network 192.168.6.0 0.0.0.31 area 0
+ network 192.168.5.0 0.0.0.127 area 0
+ network 192.168.0.0 0.0.3.255 area 0
+ network 192.168.4.0 0.0.0.255 area 0
+ network 192.168.5.128 0.0.0.63 area 0
+ network 192.168.6.32 0.0.0.3 area 0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ password bigbang
+ login
+ transport input telnet
+line vty 5 15
+ password bigbang
+ login
+ transport input telnet
+!
+!
+!
+end
